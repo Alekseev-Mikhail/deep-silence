@@ -1,15 +1,24 @@
 package io.github
 
+import io.github.block.ModBlocks
+import io.github.entity.ModEntities
+import io.github.item.ModItems
 import net.fabricmc.api.ModInitializer
 import org.slf4j.LoggerFactory
 
-object ExampleMod : ModInitializer {
-    private val logger = LoggerFactory.getLogger("phasmophobia")
+const val MOD_ID = "phasmophobia"
 
-	override fun onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
-		logger.info("Hello Fabric world!")
-	}
+object ExampleMod : ModInitializer {
+    private val logger = LoggerFactory.getLogger(this.javaClass)
+    private val modItems = ModItems()
+    private val modBlocks = ModBlocks()
+    private val modEntities = ModEntities()
+
+    override fun onInitialize() {
+        modItems.register()
+        modBlocks.register()
+        modEntities.register()
+
+        logger.info("Mod is ready! Id: $MOD_ID")
+    }
 }

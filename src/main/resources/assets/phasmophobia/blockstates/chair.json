@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=east": { "model": "phasmophobia:block/chair" },
+    "facing=south": { "model": "phasmophobia:block/chair", "y": 90 },
+    "facing=west": { "model": "phasmophobia:block/chair", "y": 180 },
+    "facing=north": { "model": "phasmophobia:block/chair", "y": 270 }
+  }
+}
