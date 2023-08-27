@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 
 const val MOD_ID = "phasmophobia"
 
-object ExampleMod : ModInitializer {
+object PhasmophobiaMod : ModInitializer {
     private val logger = LoggerFactory.getLogger(this.javaClass)
     private val modItems = ModItems()
     private val modBlocks = ModBlocks()

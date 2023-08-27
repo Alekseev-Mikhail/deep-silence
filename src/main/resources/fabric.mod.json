@@ -17,13 +17,13 @@
   "entrypoints": {
     "main": [
       {
-        "value": "io.github.ExampleMod",
+        "value": "io.github.PhasmophobiaMod",
         "adapter": "kotlin"
       }
     ],
     "client": [
       {
-        "value": "io.github.ExampleModClient",
+        "value": "io.github.PhasmophobiaModClient",
         "adapter": "kotlin"
       }
     ]
@@ -39,9 +39,9 @@
     "fabricloader": ">=0.14.22",
     "minecraft": "~1.20.1",
     "java": ">=17",
-    "geckolib": ">=4.2.2",
     "fabric-api": "*",
-    "fabric-language-kotlin": ">=1.9.0"
+    "fabric-language-kotlin": ">=1.9.0",
+    "geckolib": ">=4.2.2"
   },
   "suggests": {
     "another-mod": "*"
