@@ -17,7 +17,7 @@ class ModBlocks : ModRegister() {
         val chair = registerBlock("chair", Chair())
 
         val path = "blocks"
-        registerItemGroup(path, "itemgroup.mod.blocks", chair)
+        registerItemGroup(path, "itemgroup.$MOD_ID.blocks", chair)
         logger.info("Registered item group. Path: $path")
     }
 

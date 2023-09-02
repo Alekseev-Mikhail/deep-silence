@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "phasmophobia:item/room_tool"
+    "layer0": "ds:item/room_tool"
   }
 }

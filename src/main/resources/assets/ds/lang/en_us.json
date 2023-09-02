@@ -1,0 +1,29 @@
+{
+  "item.ds.room_tool": "Room tool",
+  "item.ds.room_tool.action.first": "First point add successful",
+  "item.ds.room_tool.action.second": "Second point add successful",
+
+  "block.ds.chair": "Room tool",
+
+  "itemgroup.ds.items.dev": "Development Tools",
+  "itemgroup.ds.items.play": "Phasmophobia Items",
+  "itemgroup.ds.blocks": "Phasmophobia Blocks",
+
+  "command.ds.error.player_null": "This player does not exist",
+  "command.ds.argument.name": "Name",
+  "command.ds.argument.point.first": "First Point",
+  "command.ds.argument.point.second": "Second Point",
+
+  "command.ds.room.create.success": "Room create successful",
+  "command.ds.room.create.fail": "Some point does not exist",
+
+  "command.ds.room.delete.success": "Room delete successful",
+  "command.ds.room.delete.fail": "This room does not exist",
+
+  "command.ds.room.delete_all.success": "Rooms delete successful",
+
+  "command.ds.room.show.success": "Rooms",
+  "command.ds.room.show.fail": "Nothing found",
+  "command.ds.room.show.with_name.success": "Room",
+  "command.ds.room.show.with_name.fail": "This room does not exist"
+}

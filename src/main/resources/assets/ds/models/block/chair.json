@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "phasmophobia:block/chair",
-		"particle": "phasmophobia:block/chair"
+		"0": "ds:block/chair",
+		"particle": "ds:block/chair"
 	},
 	"elements": [
 		{

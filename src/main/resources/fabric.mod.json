@@ -1,37 +1,37 @@
 {
   "schemaVersion": 1,
-  "id": "phasmophobia",
+  "id": "ds",
   "version": "${version}",
-  "name": "phasmophobia",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "ds",
+  "description": "A mod that brings Phasmophobia to Minecraft.",
   "authors": [
     "Rastin1st",
     "Antilop_22"
   ],
   "contact": {
-    "sources": "https://github.com/Alekseev-Mikhail/phasmophobia-mod"
+    "sources": "https://github.com/Alekseev-Mikhail/deep-silence"
   },
   "license": "CC0-1.0",
-  "icon": "assets/phasmophobia/icon.png",
+  "icon": "assets/ds/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
       {
-        "value": "io.github.PhasmophobiaMod",
+        "value": "io.github.DeepSilenceMod",
         "adapter": "kotlin"
       }
     ],
     "client": [
       {
-        "value": "io.github.PhasmophobiaModClient",
+        "value": "io.github.DeepSilenceModClient",
         "adapter": "kotlin"
       }
     ]
   },
   "mixins": [
-    "phasmophobia.mixins.json",
+    "ds.mixins.json",
     {
-      "config": "phasmophobia.client.mixins.json",
+      "config": "ds.client.mixins.json",
       "environment": "client"
     }
   ],
