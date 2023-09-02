@@ -24,12 +24,12 @@ class RoomTool(private val roomSystem: RoomSystem) : Item(FabricItemSettings()) 
         return if (!lastIsFirst) {
             lastIsFirst = true
             roomSystem.setFirstPoint(player.id, point)
-            player.sendMessage(translatable("item.$MOD_ID.room_tool.action.first").add("($point)"))
+            player.sendMessage(translatable("item.$MOD_ID.room_tool.action.first").add(" ($point)"))
             SUCCESS
         } else {
             lastIsFirst = false
             roomSystem.setSecondPoint(player.id, point)
-            player.sendMessage(translatable("item.$MOD_ID.room_tool.action.second").add("($point)"))
+            player.sendMessage(translatable("item.$MOD_ID.room_tool.action.second").add(" ($point)"))
             SUCCESS
         }
     }

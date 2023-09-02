@@ -4,27 +4,67 @@ class RoomSystem {
     private val points = mutableMapOf<Int, Pair<Point, Point>>()
     private val rooms = mutableMapOf<String, Room>()
 
-    fun addRoom(creatorId: Int, name: String): Pair<Point, Point>? {
+    operator fun get(name: String) = rooms[name]
+
+    fun createRoom(creatorId: Int, name: String): Pair<Point, Point>? {
+        if (rooms.containsKey(name)) return null
         val first = points[creatorId]?.first
         val second = points[creatorId]?.second
         if (first == null || second == null) return null
 
         val absolutePoints = getAbsolutePoints(first, second)
-        rooms[name] = Room(absolutePoints.first, absolutePoints.second)
+        rooms[name] = Room(name, absolutePoints.first, absolutePoints.second)
         points.remove(creatorId)
         return absolutePoints
     }
 
-    fun deleteRoom(name: String): Boolean = rooms.remove(name) != null
+    fun deleteRoom(name: String): Boolean {
+        val room = rooms[name] ?: return false
+        room.links.forEach { link ->
+            link.links.remove(room)
+        }
+        rooms.remove(name)
+        return true
+    }
 
-    fun deleteAllRoom() = rooms.clear()
+    fun deleteAllRooms() = rooms.clear()
 
-    operator fun get(name: String) = rooms[name]
+    fun getAllRoomNames(): List<String> {
+        val names = mutableListOf<String>()
+        rooms.forEach { entry -> names.add(entry.key) }
+        return names
+    }
 
-    fun getAllName(): List<String> {
-        val listOfRooms = mutableListOf<String>()
-        rooms.forEach { entry -> listOfRooms.add(entry.key) }
-        return listOfRooms
+    fun link(firstName: String, secondName: String): Boolean {
+        val first = rooms[firstName]
+        val second = rooms[secondName]
+        if (first == null || second == null) return false
+        first.links.add(second)
+        second.links.add(first)
+        return true
+    }
+
+    fun unlink(firstName: String, secondName: String): Boolean {
+        val first = rooms[firstName]
+        val second = rooms[secondName]
+        if (first == null || second == null) return false
+        first.links.remove(second)
+        second.links.remove(first)
+        return true
+    }
+
+    fun getAllLinkNames(): List<String> {
+        val names = mutableListOf<String>()
+        val was = mutableListOf<Room>()
+        rooms.forEach { (_, room) ->
+            room.links.forEach { link ->
+                if (!was.contains(link)) {
+                    names.add("(${room.name} - ${link.name})")
+                }
+            }
+            was.add(room)
+        }
+        return names
     }
 
     fun setFirstPoint(creatorId: Int, point: Point) {
