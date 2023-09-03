@@ -25,15 +25,19 @@
   "command.ds.room.show.rooms.found": "Rooms",
   "command.ds.room.show.rooms.nothing_found": "Nothing found",
   "command.ds.room.show.rooms.with_name.found": "Room",
-  "command.ds.room.show.rooms.with_name.nothing_found": "This room does not exist",
+  "command.ds.room.show.rooms.with_name.fail.exist": "This room does not exist",
   "command.ds.room.show.links.found": "Links",
   "command.ds.room.show.links.nothing_found": "Nothing found",
+  "command.ds.room.show.links.with_name.found": "Links",
+  "command.ds.room.show.links.with_name.nothing_found": "Nothing found",
+  "command.ds.room.show.links.with_name.fail.exist": "This room does not exist",
 
   "command.ds.room.link.success": "Room link successful",
-  "command.ds.room.link.fail.exist": "Some rooms does not exist",
+  "command.ds.room.link.fail.exist.room": "Some room does not exist",
+  "command.ds.room.link.fail.exist.point": "Some point does not exist",
   "command.ds.room.link.fail.already": "These rooms are already linked",
 
   "command.ds.room.unlink.success": "Room unlink successful",
-  "command.ds.room.unlink.fail.exist": "Some rooms does not exist",
+  "command.ds.room.unlink.fail.exist": "Some room does not exist",
   "command.ds.room.unlink.fail.already": "These rooms are already unlinked"
 }

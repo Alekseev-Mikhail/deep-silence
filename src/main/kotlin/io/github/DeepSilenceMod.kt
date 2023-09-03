@@ -5,13 +5,14 @@ import io.github.command.ModCommands
 import io.github.entity.ModEntities
 import io.github.item.ModItems
 import io.github.util.RoomSystem
+import net.fabricmc.api.DedicatedServerModInitializer
 import net.fabricmc.api.ModInitializer
 import net.minecraft.text.Text
 import org.slf4j.LoggerFactory
 
 const val MOD_ID = "ds"
 
-object DeepSilenceMod : ModInitializer {
+object DeepSilenceMod : ModInitializer, DedicatedServerModInitializer {
     private val logger = LoggerFactory.getLogger(this.javaClass)
     private val roomSystem = RoomSystem()
     private val modItems = ModItems(roomSystem)
@@ -39,6 +40,10 @@ object DeepSilenceMod : ModInitializer {
         logger.info("Commands are registered")
 
         logger.info("Mod is ready! Id: $MOD_ID")
+    }
+
+    override fun onInitializeServer() {
+
     }
 }
 
