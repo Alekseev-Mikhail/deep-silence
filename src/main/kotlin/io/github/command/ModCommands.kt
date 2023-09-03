@@ -7,6 +7,8 @@ import com.mojang.brigadier.context.CommandContext
 import io.github.MOD_ID
 import io.github.ModRegister
 import io.github.add
+import io.github.util.ALREADY
+import io.github.util.NOT_EXIST
 import io.github.util.RoomSystem
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.server.command.CommandManager
@@ -14,6 +16,9 @@ import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.text.Text.translatable
+
+private const val SUCCESS = SINGLE_SUCCESS
+private const val FAIL = 0
 
 private val argumentName = translatable("command.ds.argument.name").string
 private val argumentPointFirst = translatable("command.ds.argument.point.first").string
@@ -30,7 +35,7 @@ class ModCommands(private val roomSystem: RoomSystem) : ModRegister() {
                             literal<ServerCommandSource>("create")
                                 .then(
                                     CommandManager.argument("name", StringArgumentType.word()).executes { context ->
-                                        val player = prepare(context) ?: return@executes 0
+                                        val player = prepare(context) ?: return@executes FAIL
                                         roomCreate(context, player)
                                     },
                                 ),
@@ -39,13 +44,13 @@ class ModCommands(private val roomSystem: RoomSystem) : ModRegister() {
                             literal<ServerCommandSource>("delete")
                                 .then(
                                     CommandManager.argument("name", StringArgumentType.word()).executes { context ->
-                                        val player = prepare(context) ?: return@executes 0
+                                        val player = prepare(context) ?: return@executes FAIL
                                         roomDelete(context, player)
                                     },
                                 )
                                 .then(
                                     literal<ServerCommandSource?>("all").executes { context ->
-                                        val player = prepare(context) ?: return@executes 0
+                                        val player = prepare(context) ?: return@executes FAIL
                                         roomDeleteAll(player)
                                     },
                                 ),
@@ -58,7 +63,7 @@ class ModCommands(private val roomSystem: RoomSystem) : ModRegister() {
                                             CommandManager.argument("second name", StringArgumentType.word())
                                                 .executes { context ->
                                                     val player = prepare(context)
-                                                        ?: return@executes 0
+                                                        ?: return@executes FAIL
                                                     roomLink(context, player)
                                                 },
                                         ),
@@ -72,7 +77,7 @@ class ModCommands(private val roomSystem: RoomSystem) : ModRegister() {
                                             CommandManager.argument("second name", StringArgumentType.word())
                                                 .executes { context ->
                                                     val player = prepare(context)
-                                                        ?: return@executes 0
+                                                        ?: return@executes FAIL
                                                     roomUnlink(context, player)
                                                 },
                                         ),
@@ -85,19 +90,19 @@ class ModCommands(private val roomSystem: RoomSystem) : ModRegister() {
                                         .then(
                                             CommandManager.argument("name", StringArgumentType.word()).executes { context ->
                                                 val player = prepare(context)
-                                                    ?: return@executes 0
+                                                    ?: return@executes FAIL
                                                 roomShowRoomsWithName(context, player)
                                             },
                                         ).executes { context ->
                                             val player = prepare(context)
-                                                ?: return@executes 0
+                                                ?: return@executes FAIL
                                             roomShowRooms(player)
                                         },
                                 )
                                 .then(
                                     literal<ServerCommandSource>("links").executes { context ->
                                         val player = prepare(context)
-                                            ?: return@executes 0
+                                            ?: return@executes FAIL
                                         roomShowLinks(player)
                                     },
                                 ),
@@ -112,13 +117,13 @@ class ModCommands(private val roomSystem: RoomSystem) : ModRegister() {
 
         if (pair == null) {
             player.sendMessage(translatable("command.$MOD_ID.room.create.fail").add(" ($argumentName: $argument)"))
-            return 0
+            return FAIL
         }
         player.sendMessage(
             translatable("command.$MOD_ID.room.create.success")
                 .add(" ($argumentName: $argument $argumentPointFirst: ${pair.first} $argumentPointSecond: ${pair.second})"),
         )
-        return SINGLE_SUCCESS
+        return SUCCESS
     }
 
     private fun roomDelete(context: CommandContext<ServerCommandSource>, player: ServerPlayerEntity): Int {
@@ -126,54 +131,72 @@ class ModCommands(private val roomSystem: RoomSystem) : ModRegister() {
 
         if (!roomSystem.deleteRoom(argument)) {
             player.sendMessage(translatable("command.$MOD_ID.room.delete.fail").add(" ($argumentName: $argument)"))
-            return 0
+            return FAIL
         }
         player.sendMessage(translatable("command.$MOD_ID.room.delete.success").add(" ($argumentName: $argument)"))
-        return SINGLE_SUCCESS
+        return SUCCESS
     }
 
     private fun roomDeleteAll(player: ServerPlayerEntity): Int {
         roomSystem.deleteAllRooms()
         player.sendMessage(translatable("command.$MOD_ID.room.delete_all.success"))
-        return SINGLE_SUCCESS
+        return SUCCESS
     }
 
     private fun roomLink(context: CommandContext<ServerCommandSource>, player: ServerPlayerEntity): Int {
         val firstArgument = context.getArgument("first name", String.toString().javaClass)
         val secondArgument = context.getArgument("second name", String.toString().javaClass)
+        val result = roomSystem.link(firstArgument, secondArgument)
 
-        if (!roomSystem.link(firstArgument, secondArgument)) {
+        if (result == NOT_EXIST) {
             player.sendMessage(
-                translatable("command.$MOD_ID.room.link.fail")
+                translatable("command.$MOD_ID.room.link.fail.exist")
                     .add(" ($argumentName 1: $firstArgument $argumentName 2: $secondArgument)"),
             )
-            return 0
+            return FAIL
+        }
+
+        if (result == ALREADY) {
+            player.sendMessage(
+                translatable("command.$MOD_ID.room.link.fail.already")
+                    .add(" ($argumentName 1: $firstArgument $argumentName 2: $secondArgument)"),
+            )
+            return FAIL
         }
 
         player.sendMessage(
             translatable("command.$MOD_ID.room.link.success")
                 .add(" ($argumentName 1: $firstArgument $argumentName 2: $secondArgument)"),
         )
-        return SINGLE_SUCCESS
+        return SUCCESS
     }
 
     private fun roomUnlink(context: CommandContext<ServerCommandSource>, player: ServerPlayerEntity): Int {
         val firstArgument = context.getArgument("first name", String.toString().javaClass)
         val secondArgument = context.getArgument("second name", String.toString().javaClass)
+        val result = roomSystem.unlink(firstArgument, secondArgument)
 
-        if (!roomSystem.unlink(firstArgument, secondArgument)) {
+        if (result == NOT_EXIST) {
             player.sendMessage(
-                translatable("command.$MOD_ID.room.unlink.fail")
+                translatable("command.$MOD_ID.room.unlink.fail.exist")
                     .add(" ($argumentName 1: $firstArgument $argumentName 2: $secondArgument)"),
             )
-            return 0
+            return FAIL
+        }
+
+        if (result == ALREADY) {
+            player.sendMessage(
+                translatable("command.$MOD_ID.room.unlink.fail.already")
+                    .add(" ($argumentName 1: $firstArgument $argumentName 2: $secondArgument)"),
+            )
+            return FAIL
         }
 
         player.sendMessage(
             translatable("command.$MOD_ID.room.unlink.success")
                 .add(" ($argumentName 1: $firstArgument $argumentName 2: $secondArgument)"),
         )
-        return SINGLE_SUCCESS
+        return SUCCESS
     }
 
     private fun roomShowRooms(player: ServerPlayerEntity): Int {
@@ -183,7 +206,7 @@ class ModCommands(private val roomSystem: RoomSystem) : ModRegister() {
         } else {
             player.sendMessage(translatable("command.$MOD_ID.room.show.rooms.found").add(message))
         }
-        return SINGLE_SUCCESS
+        return SUCCESS
     }
 
     private fun roomShowRoomsWithName(context: CommandContext<ServerCommandSource>, player: ServerPlayerEntity): Int {
@@ -191,13 +214,13 @@ class ModCommands(private val roomSystem: RoomSystem) : ModRegister() {
         val room = roomSystem[argument]
         if (room == null) {
             player.sendMessage(translatable("command.$MOD_ID.room.show.rooms.with_name.nothing_found"))
-            return 0
+            return FAIL
         }
         player.sendMessage(
             translatable("command.$MOD_ID.room.show.rooms.with_name.found")
                 .add(": $argumentPointFirst: ${room.firstPoint} $argumentPointSecond: ${room.secondPoint}"),
         )
-        return SINGLE_SUCCESS
+        return SUCCESS
     }
 
     private fun roomShowLinks(player: ServerPlayerEntity): Int {
@@ -208,7 +231,7 @@ class ModCommands(private val roomSystem: RoomSystem) : ModRegister() {
         } else {
             player.sendMessage(translatable("command.$MOD_ID.room.show.links.found").add(message))
         }
-        return SINGLE_SUCCESS
+        return SUCCESS
     }
 
     private fun prepare(context: CommandContext<ServerCommandSource>): ServerPlayerEntity? {

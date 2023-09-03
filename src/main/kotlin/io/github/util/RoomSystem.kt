@@ -1,5 +1,9 @@
 package io.github.util
 
+const val SUCCESS = 0
+const val NOT_EXIST = 1
+const val ALREADY = 2
+
 class RoomSystem {
     private val points = mutableMapOf<Int, Pair<Point, Point>>()
     private val rooms = mutableMapOf<String, Room>()
@@ -35,22 +39,24 @@ class RoomSystem {
         return names
     }
 
-    fun link(firstName: String, secondName: String): Boolean {
+    fun link(firstName: String, secondName: String): Int {
         val first = rooms[firstName]
         val second = rooms[secondName]
-        if (first == null || second == null) return false
+        if (first == null || second == null) return NOT_EXIST
+        if (first.links.contains(second) || second.links.contains(first)) return ALREADY
         first.links.add(second)
         second.links.add(first)
-        return true
+        return SUCCESS
     }
 
-    fun unlink(firstName: String, secondName: String): Boolean {
+    fun unlink(firstName: String, secondName: String): Int {
         val first = rooms[firstName]
         val second = rooms[secondName]
-        if (first == null || second == null) return false
+        if (first == null || second == null) return NOT_EXIST
+        if (!first.links.contains(second) || !second.links.contains(first)) return ALREADY
         first.links.remove(second)
         second.links.remove(first)
-        return true
+        return SUCCESS
     }
 
     fun getAllLinkNames(): List<String> {

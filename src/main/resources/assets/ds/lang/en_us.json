@@ -30,8 +30,10 @@
   "command.ds.room.show.links.nothing_found": "Nothing found",
 
   "command.ds.room.link.success": "Room link successful",
-  "command.ds.room.link.fail": "Some rooms does not exist",
+  "command.ds.room.link.fail.exist": "Some rooms does not exist",
+  "command.ds.room.link.fail.already": "These rooms are already linked",
 
   "command.ds.room.unlink.success": "Room unlink successful",
-  "command.ds.room.unlink.fail": "Some rooms does not exist"
+  "command.ds.room.unlink.fail.exist": "Some rooms does not exist",
+  "command.ds.room.unlink.fail.already": "These rooms are already unlinked"
 }
