@@ -1,10 +1,13 @@
 package io.github.util
 
 import io.github.util.RoomSystemResult.ALREADY
+import io.github.util.RoomSystemResult.ONE_WAY_LINK
 import io.github.util.RoomSystemResult.POINT_DOES_NOT_EXIST
 import io.github.util.RoomSystemResult.ROOM_DOES_NOT_EXIST
 import io.github.util.RoomSystemResult.SUCCESS
+import kotlinx.serialization.Serializable
 
+@Serializable
 class RoomSystem {
     private val points = mutableMapOf<Int, Pair<Point, Point>>()
     private val rooms = mutableMapOf<String, Room>()
@@ -21,13 +24,15 @@ class RoomSystem {
         return absolutePoints
     }
 
-    fun deleteRoom(name: String): Boolean {
-        val room = rooms[name] ?: return false
-        room.links.forEach { (link, _) ->
-            link.links.remove(room)
-        }
+    fun deleteRoom(name: String): RoomSystemResult {
+        val room = rooms[name] ?: return ROOM_DOES_NOT_EXIST
+        var wasOneWay = false
         rooms.remove(name)
-        return true
+        room.links.forEach { (linkName, _) ->
+            val link = get(linkName)
+            if (link != null) link.links.remove(room.name) else wasOneWay = true
+        }
+        return if (wasOneWay) ONE_WAY_LINK else SUCCESS
     }
 
     fun deleteAllRooms() = rooms.clear()
@@ -40,38 +45,39 @@ class RoomSystem {
 
     fun link(firstName: String, secondName: String, creatorId: Int): RoomSystemResult {
         val roomPair = getFirstAndSecondRoom(firstName, secondName) ?: return ROOM_DOES_NOT_EXIST
-        if (roomPair.first.links.contains(roomPair.second) || roomPair.second.links.contains(roomPair.first)) return ALREADY
+        if (roomPair.first.links.contains(roomPair.second.name) || roomPair.second.links.contains(roomPair.first.name)) return ALREADY
         val pointPair = getFirstAndSecondPoint(creatorId) ?: return POINT_DOES_NOT_EXIST
-        roomPair.first.links[roomPair.second] = pointPair
-        roomPair.second.links[roomPair.first] = Pair(pointPair.second, pointPair.first)
+        roomPair.first.links[roomPair.second.name] = pointPair
+        roomPair.second.links[roomPair.first.name] = Pair(pointPair.second, pointPair.first)
+        points.remove(creatorId)
         return SUCCESS
     }
 
     fun unlink(firstName: String, secondName: String): RoomSystemResult {
         val pair = getFirstAndSecondRoom(firstName, secondName) ?: return ROOM_DOES_NOT_EXIST
-        if (pair.first.links.remove(pair.second) == null || pair.second.links.remove(pair.first) == null) return ALREADY
+        if (pair.first.links.remove(pair.second.name) == null || pair.second.links.remove(pair.first.name) == null) return ALREADY
         return SUCCESS
     }
 
     fun getAllLinkNamesByRoomName(name: String): MutableList<String>? {
         val room = rooms[name] ?: return null
         val names = mutableListOf<String>()
-        room.links.forEach { (link, pair) ->
-            names.add("(${room.name} - ${link.name} 1: ${pair.first} 2: ${pair.second})")
+        room.links.forEach { (linkName, pair) ->
+            names.add("(${room.name} - $linkName 1: ${pair.first} 2: ${pair.second})")
         }
         return names
     }
 
     fun getAllLinkNames(): List<String> {
         val names = mutableListOf<String>()
-        val was = mutableListOf<Room>()
+        val was = mutableListOf<String>()
         rooms.forEach { (_, room) ->
-            room.links.forEach { (link, pair) ->
-                if (!was.contains(link)) {
-                    names.add("(${room.name} - ${link.name} 1: ${pair.first} 2: ${pair.second})")
+            room.links.forEach { (linkName, pair) ->
+                if (!was.contains(linkName)) {
+                    names.add("(${room.name} - $linkName 1: (${pair.first}) 2: (${pair.second}))")
                 }
             }
-            was.add(room)
+            was.add(room.name)
         }
         return names
     }

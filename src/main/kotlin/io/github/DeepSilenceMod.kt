@@ -4,24 +4,27 @@ import io.github.block.ModBlocks
 import io.github.command.ModCommands
 import io.github.entity.ModEntities
 import io.github.item.ModItems
-import io.github.util.RoomSystem
-import net.fabricmc.api.DedicatedServerModInitializer
+import io.github.util.RoomSystemStorage
 import net.fabricmc.api.ModInitializer
 import net.minecraft.text.Text
 import org.slf4j.LoggerFactory
+import java.io.File
 
 const val MOD_ID = "ds"
 
-object DeepSilenceMod : ModInitializer, DedicatedServerModInitializer {
+val PATH: String = getPath()
+
+object DeepSilenceMod : ModInitializer {
     private val logger = LoggerFactory.getLogger(this.javaClass)
-    private val roomSystem = RoomSystem()
-    private val modItems = ModItems(roomSystem)
+    private val storage = RoomSystemStorage()
+    private val modItems = ModItems(storage)
     private val modBlocks = ModBlocks()
     private val modEntities = ModEntities()
-    private val modCommands = ModCommands(roomSystem)
+    private val modCommands = ModCommands(storage)
 
     override fun onInitialize() {
         logger.info("Mod is being prepared. Id: $MOD_ID")
+        logger.info("Path: $PATH")
 
         logger.warn("Items are registering")
         modItems.register()
@@ -41,10 +44,16 @@ object DeepSilenceMod : ModInitializer, DedicatedServerModInitializer {
 
         logger.info("Mod is ready! Id: $MOD_ID")
     }
-
-    override fun onInitializeServer() {
-
-    }
 }
 
 fun Text.add(string: String): Text = Text.of(this.string + string)
+
+private fun getPath(): String {
+    var message = File(DeepSilenceMod::class.java.protectionDomain.codeSource.location.path).parentFile.absolutePath
+    message = if (message.contains("classes")) {
+        "$message/../../../$MOD_ID"
+    } else {
+        "$message/../$MOD_ID"
+    }
+    return message
+}

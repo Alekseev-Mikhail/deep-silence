@@ -5,4 +5,6 @@ enum class RoomSystemResult {
     ROOM_DOES_NOT_EXIST,
     POINT_DOES_NOT_EXIST,
     ALREADY,
+    ONE_WAY_LINK,
+    FAIL,
 }
