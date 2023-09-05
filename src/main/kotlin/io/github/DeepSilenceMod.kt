@@ -48,12 +48,15 @@ object DeepSilenceMod : ModInitializer {
 
 fun Text.add(string: String): Text = Text.of(this.string + string)
 
-private fun getPath(): String {
-    var message = File(DeepSilenceMod::class.java.protectionDomain.codeSource.location.path).parentFile.absolutePath
-    message = if (message.contains("classes")) {
-        "$message/../../../$MOD_ID"
-    } else {
-        "$message/../$MOD_ID"
+fun checkDirectory(path: String) {
+    if (!File(path).exists()) {
+        File(path).mkdir()
     }
-    return message
+}
+
+private fun getPath(): String {
+    var path = File(DeepSilenceMod::class.java.protectionDomain.codeSource.location.path).parentFile.absolutePath
+    path = if (path.contains("classes")) "$path/../../../$MOD_ID" else "$path/../$MOD_ID"
+    checkDirectory(path)
+    return path
 }

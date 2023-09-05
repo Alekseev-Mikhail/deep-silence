@@ -156,11 +156,8 @@ class ModCommands(private val storage: RoomSystemStorage) : ModRegister() {
     private fun save(context: CommandContext<ServerCommandSource>, player: ServerPlayerEntity): Int {
         val argument = context.getArgument("name", String.toString().javaClass)
         val additionalMessage = " ($argumentName: $argument)"
-        return when (storage.save(argument)) {
-            SUCCESS -> sendReply(player, "save.success", additionalMessage, COMMAND_SUCCESS)
-            FAIL -> sendReply(player, "save.fail", additionalMessage, COMMAND_FAIL)
-            else -> sendReply(player)
-        }
+        storage.save(argument)
+        return sendReply(player, "save.success", additionalMessage, COMMAND_SUCCESS)
     }
 
     private fun read(context: CommandContext<ServerCommandSource>, player: ServerPlayerEntity): Int {

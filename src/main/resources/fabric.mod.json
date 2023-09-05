@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "ds",
   "version": "${version}",
-  "name": "ds",
+  "name": "Deep Silence",
   "description": "A mod that brings Phasmophobia to Minecraft.",
   "authors": [
     "Rastin1st",

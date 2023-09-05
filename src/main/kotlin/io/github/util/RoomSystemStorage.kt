@@ -1,14 +1,13 @@
 package io.github.util
 
 import io.github.PATH
+import io.github.checkDirectory
 import io.github.util.RoomSystemResult.FAIL
 import io.github.util.RoomSystemResult.SUCCESS
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.FileWriter
-import java.io.IOException
-import java.lang.NullPointerException
 import java.util.Scanner
 
 class RoomSystemStorage {
@@ -17,32 +16,22 @@ class RoomSystemStorage {
     val roomSystem
         get() = insideRoomSystem
 
-    fun save(name: String): RoomSystemResult {
-        return try {
-            val file = FileWriter("$PATH/$name/rs.json")
-            val string = Json.encodeToString(roomSystem)
-
-            println(string)
-
-            file.write(string)
-            file.close()
-            SUCCESS
-        } catch (e: IOException) {
-            FAIL
-        }
+    fun save(name: String) {
+        val path = "$PATH/$name"
+        checkDirectory(path)
+        val file = FileWriter("$path/rs.json")
+        val string = Json.encodeToString(roomSystem)
+        file.write(string)
+        file.close()
     }
 
     fun read(name: String): RoomSystemResult {
-        return try {
-            val file = File("$PATH/$name/rs.json")
+        val file = File("$PATH/$name/rs.json")
+        if (file.exists()) {
             val obj = Json.decodeFromString<RoomSystem>(Scanner(file).nextLine())
-
-            println(obj)
-
             insideRoomSystem = obj
-            SUCCESS
-        } catch (e: NullPointerException) {
-            FAIL
+            return SUCCESS
         }
+        return FAIL
     }
 }
