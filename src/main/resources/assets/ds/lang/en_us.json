@@ -22,7 +22,8 @@
   "command.ds.read.fail": "Something went wrong",
 
   "command.ds.room.create.success": "Room create successful",
-  "command.ds.room.create.fail": "Some point does not exist or name is already taken",
+  "command.ds.room.create.fail.exist": "Some point does not exist",
+  "command.ds.room.create.fail.already": "This name is already taken",
 
   "command.ds.room.delete.success": "Room delete successful",
   "command.ds.room.delete.fail.exist": "This room does not exist",
@@ -41,11 +42,13 @@
   "command.ds.room.show.links.with_name.fail.exist": "This room does not exist",
 
   "command.ds.room.link.success": "Room link successful",
+  "command.ds.room.link.fail.same_room": "Names must be different",
   "command.ds.room.link.fail.exist.room": "Some room does not exist",
   "command.ds.room.link.fail.exist.point": "Some point does not exist",
   "command.ds.room.link.fail.already": "These rooms are already linked",
 
   "command.ds.room.unlink.success": "Room unlink successful",
+  "command.ds.room.unlink.fail.same_room": "Names must be different",
   "command.ds.room.unlink.fail.exist": "Some room does not exist",
   "command.ds.room.unlink.fail.already": "These rooms are already unlinked"
 }
