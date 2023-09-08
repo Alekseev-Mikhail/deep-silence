@@ -50,5 +50,6 @@
   "command.ds.room.unlink.success": "Room unlink successful",
   "command.ds.room.unlink.fail.same_room": "Names must be different",
   "command.ds.room.unlink.fail.exist": "Some room does not exist",
-  "command.ds.room.unlink.fail.already": "These rooms are already unlinked"
+  "command.ds.room.unlink.fail.already": "These rooms are already unlinked",
+  "command.ds.room.unlink.all": "All rooms unlink successful"
 }

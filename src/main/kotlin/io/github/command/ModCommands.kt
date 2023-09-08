@@ -80,7 +80,7 @@ class ModCommands(private val storage: RoomSystemStorage) : ModRegister() {
                                     },
                                 )
                                 .then(
-                                    literal<ServerCommandSource?>("all").executes { context ->
+                                    literal<ServerCommandSource>("all").executes { context ->
                                         val player = prepare(context)
                                             ?: return@executes COMMAND_FAIL
                                         roomDeleteAll(player)
@@ -113,6 +113,13 @@ class ModCommands(private val storage: RoomSystemStorage) : ModRegister() {
                                                     roomUnlink(context, player)
                                                 },
                                         ),
+                                )
+                                .then(
+                                    literal<ServerCommandSource>("all").executes { context ->
+                                        val player = prepare(context)
+                                            ?: return@executes COMMAND_FAIL
+                                        roomUnlinkAll(player)
+                                    },
                                 ),
                         )
                         .then(
@@ -231,6 +238,11 @@ class ModCommands(private val storage: RoomSystemStorage) : ModRegister() {
             ALREADY -> sendReply(player, "room.unlink.fail.already", additionalMessage, COMMAND_FAIL)
             else -> sendReply(player)
         }
+    }
+
+    private fun roomUnlinkAll(player: ServerPlayerEntity): Int {
+        roomSystem.unlinkAll()
+        return sendReply(player, "room.unlink.all", COMMAND_SUCCESS)
     }
 
     private fun roomShowRooms(player: ServerPlayerEntity): Int {

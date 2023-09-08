@@ -16,6 +16,7 @@ class RoomSystem {
     fun createRoom(playerId: Int, name: String): RoomSystemResult {
         if (rooms.containsKey(name)) return ALREADY
         val pair = points[playerId] ?: return POINT_DOES_NOT_EXIST
+        if (pair.first.isEmpty || pair.second.isEmpty) return POINT_DOES_NOT_EXIST
         val absolutePoints = getAbsolutePoints(pair.first, pair.second)
         rooms[name] = Room(name, absolutePoints.first, absolutePoints.second)
         points.remove(playerId)
@@ -59,6 +60,12 @@ class RoomSystem {
         val pair = getRooms(firstName, secondName) ?: return ROOM_DOES_NOT_EXIST
         if (pair.first.links.remove(pair.second.name) == null || pair.second.links.remove(pair.first.name) == null) return ALREADY
         return SUCCESS
+    }
+
+    fun unlinkAll() {
+        rooms.forEach { (_, room) ->
+            room.links.clear()
+        }
     }
 
     fun getAllLinkNamesByRoomName(name: String): MutableList<String>? {
