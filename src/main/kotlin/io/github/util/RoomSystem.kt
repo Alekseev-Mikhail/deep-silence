@@ -9,9 +9,13 @@ import io.github.util.RoomSystemResult.SUCCESS
 import kotlinx.serialization.Serializable
 
 @Serializable
-class RoomSystem {
+class RoomSystem() {
     private val points = mutableMapOf<Int, Pair<Point, Point>>()
     private val rooms = mutableMapOf<String, Room>()
+
+    constructor(roomSystem: RoomSystem) : this() {
+        roomSystem.rooms.forEach { (name, room) -> rooms[name] = room }
+    }
 
     fun createRoom(playerId: Int, name: String): RoomSystemResult {
         if (rooms.containsKey(name)) return ALREADY
@@ -134,3 +138,5 @@ class RoomSystem {
         return Pair(Point(firstX, firstY, firstZ), Point(secondX, secondY, secondZ))
     }
 }
+
+fun withoutPoints(roomSystem: RoomSystem) = RoomSystem(roomSystem)

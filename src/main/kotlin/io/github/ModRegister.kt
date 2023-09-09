@@ -5,7 +5,7 @@ import net.minecraft.item.ItemConvertible
 import net.minecraft.item.ItemStack
 import net.minecraft.registry.Registries
 import net.minecraft.registry.Registry
-import net.minecraft.text.Text
+import net.minecraft.text.Text.translatable
 import net.minecraft.util.Identifier
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -22,7 +22,7 @@ fun registerItemGroup(path: String, translateKey: String, vararg itemConvertible
         Identifier(MOD_ID, path),
         FabricItemGroup
             .builder()
-            .displayName(Text.translatable(translateKey))
+            .displayName(translatable(translateKey))
             .icon { ItemStack(itemConvertibles.first()) }.entries { _, entries ->
                 itemConvertibles.forEach { item ->
                     entries.add(item)

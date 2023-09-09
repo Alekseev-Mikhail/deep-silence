@@ -20,7 +20,7 @@ class RoomSystemStorage {
         val path = "$PATH/$name"
         checkDirectory(path)
         val file = FileWriter("$path/rs.json")
-        val string = Json.encodeToString(roomSystem)
+        val string = Json.encodeToString(withoutPoints(insideRoomSystem))
         file.write(string)
         file.close()
     }
