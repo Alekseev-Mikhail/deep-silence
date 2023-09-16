@@ -3,23 +3,24 @@ package io.github.command
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 import com.mojang.brigadier.context.CommandContext
+import io.github.DeepSilence
 import io.github.MOD_ID
 import io.github.ModRegister
 import io.github.add
-import io.github.util.RoomSystemResult.ALREADY
-import io.github.util.RoomSystemResult.FAIL
-import io.github.util.RoomSystemResult.ONE_WAY_LINK
-import io.github.util.RoomSystemResult.POINT_DOES_NOT_EXIST
-import io.github.util.RoomSystemResult.ROOM_DOES_NOT_EXIST
-import io.github.util.RoomSystemResult.SAME_ROOM
-import io.github.util.RoomSystemResult.SUCCESS
-import io.github.util.RoomSystemStorage
+import io.github.util.room.RoomSystemResult.ALREADY
+import io.github.util.room.RoomSystemResult.ONE_WAY_LINK
+import io.github.util.room.RoomSystemResult.POINT_DOES_NOT_EXIST
+import io.github.util.room.RoomSystemResult.ROOM_DOES_NOT_EXIST
+import io.github.util.room.RoomSystemResult.SAME_ROOM
+import io.github.util.room.RoomSystemResult.SUCCESS
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.text.Text.translatable
+import io.github.util.DeepSilenceResult.FAIL as DS_FAIL
+import io.github.util.DeepSilenceResult.SUCCESS as DS_SUCCESS
 
 private const val COMMAND_SUCCESS = 1
 private const val COMMAND_FAIL = 2
@@ -30,14 +31,31 @@ private val argumentName = translatable("command.ds.argument.name").string
 private val argumentPointFirst = translatable("command.ds.argument.point.first").string
 private val argumentPointSecond = translatable("command.ds.argument.point.second").string
 
-class ModCommands(private val storage: RoomSystemStorage) : ModRegister() {
+class ModCommands(private val deepSilence: DeepSilence) : ModRegister() {
     private val roomSystem
-        get() = storage.roomSystem
+        get() = deepSilence.roomSystem
+
+    private val ghost
+        get() = deepSilence.ghost
 
     override fun register() = CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
         dispatcher.register(
             literal<ServerCommandSource>(MOD_ID)
 //                .requires { source -> source.hasPermissionLevel(4) }
+                .then(
+                    literal<ServerCommandSource>("start").executes { context ->
+                        val player = prepare(context)
+                            ?: return@executes COMMAND_FAIL
+                        start(context, player)
+                    },
+                )
+                .then(
+                    literal<ServerCommandSource>("stop").executes { context ->
+                        val player = prepare(context)
+                            ?: return@executes COMMAND_FAIL
+                        stop(player)
+                    },
+                )
                 .then(
                     literal<ServerCommandSource>("save")
                         .then(
@@ -56,6 +74,19 @@ class ModCommands(private val storage: RoomSystemStorage) : ModRegister() {
                                     ?: return@executes COMMAND_FAIL
                                 read(context, player)
                             },
+                        ),
+                )
+                .then(
+                    literal<ServerCommandSource>("ghost")
+                        .then(
+                            literal<ServerCommandSource>("show")
+                                .then(
+                                    literal<ServerCommandSource>("task").executes { context ->
+                                        val player = prepare(context)
+                                            ?: return@executes COMMAND_FAIL
+                                        ghostShowTask(player)
+                                    },
+                                ),
                         ),
                 )
                 .then(
@@ -161,21 +192,35 @@ class ModCommands(private val storage: RoomSystemStorage) : ModRegister() {
         )
     }
 
+    private fun start(context: CommandContext<ServerCommandSource>, player: ServerPlayerEntity) = when (deepSilence.start(context)) {
+        DS_SUCCESS -> sendReply(player, "start.success", COMMAND_SUCCESS)
+        DS_FAIL -> sendReply(player, "start.fail", COMMAND_FAIL)
+    }
+
+    private fun stop(player: ServerPlayerEntity): Int {
+        deepSilence.stop()
+        return sendReply(player, "stop", COMMAND_SUCCESS)
+    }
+
     private fun save(context: CommandContext<ServerCommandSource>, player: ServerPlayerEntity): Int {
         val argument = context.getArgument("name", String.toString().javaClass)
         val additionalMessage = " ($argumentName: $argument)"
-        storage.save(argument)
-        return sendReply(player, "save.success", additionalMessage, COMMAND_SUCCESS)
+        deepSilence.save(argument)
+        return sendReply(player, "save", additionalMessage, COMMAND_SUCCESS)
     }
 
     private fun read(context: CommandContext<ServerCommandSource>, player: ServerPlayerEntity): Int {
         val argument = context.getArgument("name", String.toString().javaClass)
         val additionalMessage = " ($argumentName: $argument)"
-        return when (storage.read(argument)) {
-            SUCCESS -> sendReply(player, "read.success", additionalMessage, COMMAND_SUCCESS)
-            FAIL -> sendReply(player, "read.fail", additionalMessage, COMMAND_FAIL)
-            else -> sendReply(player)
+        return when (deepSilence.read(argument)) {
+            DS_SUCCESS -> sendReply(player, "read.success", additionalMessage, COMMAND_SUCCESS)
+            DS_FAIL -> sendReply(player, "read.fail", additionalMessage, COMMAND_FAIL)
         }
+    }
+
+    private fun ghostShowTask(player: ServerPlayerEntity): Int {
+        val task = ghost?.getTask() ?: return sendReply(player, "ghost.show.tasks.fail", COMMAND_FAIL)
+        return sendReply(player, "ghost.show.tasks.success", " (${task.first.name}: ${task.second.length})", COMMAND_SUCCESS)
     }
 
     private fun roomCreate(context: CommandContext<ServerCommandSource>, player: ServerPlayerEntity): Int {

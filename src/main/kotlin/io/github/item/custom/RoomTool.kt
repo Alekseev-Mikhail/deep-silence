@@ -3,7 +3,7 @@ package io.github.item.custom
 import io.github.MOD_ID
 import io.github.add
 import io.github.util.Point
-import io.github.util.RoomSystemStorage
+import io.github.DeepSilence
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
 import net.minecraft.item.Item
 import net.minecraft.item.ItemUsageContext
@@ -12,10 +12,10 @@ import net.minecraft.util.ActionResult
 import net.minecraft.util.ActionResult.FAIL
 import net.minecraft.util.ActionResult.SUCCESS
 
-class RoomTool(private var storage: RoomSystemStorage) : Item(FabricItemSettings()) {
+class RoomTool(private var deepSilence: DeepSilence) : Item(FabricItemSettings()) {
     private var lastIsFirst = false
     private val roomSystem
-        get() = storage.roomSystem
+        get() = deepSilence.roomSystem
 
     override fun useOnBlock(context: ItemUsageContext): ActionResult {
         if (context.world.isClient) return super.useOnBlock(context)

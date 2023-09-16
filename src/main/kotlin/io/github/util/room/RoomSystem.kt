@@ -1,11 +1,13 @@
-package io.github.util
+package io.github.util.room
 
-import io.github.util.RoomSystemResult.ALREADY
-import io.github.util.RoomSystemResult.ONE_WAY_LINK
-import io.github.util.RoomSystemResult.POINT_DOES_NOT_EXIST
-import io.github.util.RoomSystemResult.ROOM_DOES_NOT_EXIST
-import io.github.util.RoomSystemResult.SAME_ROOM
-import io.github.util.RoomSystemResult.SUCCESS
+import io.github.util.EMPTY_POINT
+import io.github.util.Point
+import io.github.util.room.RoomSystemResult.ALREADY
+import io.github.util.room.RoomSystemResult.ONE_WAY_LINK
+import io.github.util.room.RoomSystemResult.POINT_DOES_NOT_EXIST
+import io.github.util.room.RoomSystemResult.ROOM_DOES_NOT_EXIST
+import io.github.util.room.RoomSystemResult.SAME_ROOM
+import io.github.util.room.RoomSystemResult.SUCCESS
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -41,6 +43,8 @@ class RoomSystem() {
     fun deleteAllRooms() = rooms.clear()
 
     fun getRoom(name: String) = rooms[name]
+
+    fun getRandomRoom() = if (rooms.isNotEmpty()) rooms.entries.random().value else null
 
     fun getAllRoomNames(): List<String> {
         val names = mutableListOf<String>()

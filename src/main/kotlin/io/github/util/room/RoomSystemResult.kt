@@ -1,8 +1,7 @@
-package io.github.util
+package io.github.util.room
 
 enum class RoomSystemResult {
     SUCCESS,
-    FAIL,
     ROOM_DOES_NOT_EXIST,
     POINT_DOES_NOT_EXIST,
     SAME_ROOM,

@@ -17,13 +17,13 @@
   "entrypoints": {
     "main": [
       {
-        "value": "io.github.DeepSilenceMod",
+        "value": "io.github.DeepSilence",
         "adapter": "kotlin"
       }
     ],
     "client": [
       {
-        "value": "io.github.DeepSilenceModClient",
+        "value": "io.github.DeepSilenceClient",
         "adapter": "kotlin"
       }
     ]

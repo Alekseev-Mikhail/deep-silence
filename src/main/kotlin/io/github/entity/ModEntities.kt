@@ -12,14 +12,14 @@ import net.minecraft.registry.Registries.ENTITY_TYPE
 import net.minecraft.registry.Registry
 import net.minecraft.util.Identifier
 
-var entityNotebook: EntityType<NotebookEntity>? = null
+var notebookEntityType: EntityType<NotebookEntity>? = null
     set(value) {
         if (field == null) field = value
     }
 
 class ModEntities : ModRegister() {
     override fun register() {
-        entityNotebook = registerEntity(
+        notebookEntityType = registerEntity(
             "notebook",
             FabricEntityTypeBuilder.create(MISC) { type, world -> NotebookEntity(type, world) }
                 .dimensions(EntityDimensions.fixed(0.8f, 0.15f))

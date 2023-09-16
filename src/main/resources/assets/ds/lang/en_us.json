@@ -15,11 +15,18 @@
   "command.ds.argument.point.first": "First Point",
   "command.ds.argument.point.second": "Second Point",
 
-  "command.ds.save.success": "Room System save successful",
-  "command.ds.save.fail": "Something went wrong",
+  "command.ds.start.success": "Game start successful",
+  "command.ds.start.fail": "Room system is empty",
+
+  "command.ds.stop": "Game stop successful",
+
+  "command.ds.save": "Room System save successful",
 
   "command.ds.read.success": "Room System read successful",
   "command.ds.read.fail": "Something went wrong",
+
+  "command.ds.ghost.show.tasks.success": "Ghost tasks show successful",
+  "command.ds.ghost.show.tasks.fail": "Ghost does not exist",
 
   "command.ds.room.create.success": "Room create successful",
   "command.ds.room.create.fail.exist": "Some point does not exist",

@@ -1,12 +1,12 @@
 package io.github
 
 import io.github.client.NotebookRenderer
-import io.github.entity.entityNotebook
+import io.github.entity.notebookEntityType
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry
 
-object DeepSilenceModClient : ClientModInitializer {
+class DeepSilenceClient : ClientModInitializer {
     override fun onInitializeClient() {
-        EntityRendererRegistry.register(entityNotebook) { context -> NotebookRenderer(context) }
+        EntityRendererRegistry.register(notebookEntityType) { context -> NotebookRenderer(context) }
     }
 }
