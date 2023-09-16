@@ -1,9 +1,9 @@
 package io.github.item.custom
 
+import io.github.DeepSilence
 import io.github.MOD_ID
 import io.github.add
 import io.github.util.Point
-import io.github.DeepSilence
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings
 import net.minecraft.item.Item
 import net.minecraft.item.ItemUsageContext

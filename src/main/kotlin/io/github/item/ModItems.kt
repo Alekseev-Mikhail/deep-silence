@@ -1,10 +1,10 @@
 package io.github.item
 
+import io.github.DeepSilence
 import io.github.MOD_ID
 import io.github.ModRegister
 import io.github.item.custom.RoomTool
 import io.github.registerItemGroup
-import io.github.DeepSilence
 import net.minecraft.item.Item
 import net.minecraft.registry.Registries.ITEM
 import net.minecraft.registry.Registry
