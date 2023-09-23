@@ -1,13 +1,13 @@
-package io.github.util.room
+package io.github.room
 
 import io.github.util.EMPTY_POINT
 import io.github.util.Point
-import io.github.util.room.RoomSystemResult.ALREADY
-import io.github.util.room.RoomSystemResult.ONE_WAY_LINK
-import io.github.util.room.RoomSystemResult.POINT_DOES_NOT_EXIST
-import io.github.util.room.RoomSystemResult.ROOM_DOES_NOT_EXIST
-import io.github.util.room.RoomSystemResult.SAME_ROOM
-import io.github.util.room.RoomSystemResult.SUCCESS
+import io.github.room.RoomSystemResult.ALREADY
+import io.github.room.RoomSystemResult.ONE_WAY_LINK
+import io.github.room.RoomSystemResult.POINT_DOES_NOT_EXIST
+import io.github.room.RoomSystemResult.ROOM_DOES_NOT_EXIST
+import io.github.room.RoomSystemResult.SAME_ROOM
+import io.github.room.RoomSystemResult.SUCCESS
 import kotlinx.serialization.Serializable
 
 @Serializable

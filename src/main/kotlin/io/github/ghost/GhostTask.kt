@@ -1,7 +1,8 @@
-package io.github.util.ghost
+package io.github.ghost
 
-import io.github.util.ghost.GhostTaskResult.EXPIRED
-import io.github.util.ghost.GhostTaskResult.PASS
+import io.github.ghost.GhostTaskResult.EXPIRED
+import io.github.ghost.GhostTaskResult.PASS
+import io.github.tick
 
 abstract class GhostTask(min: Int, max: Int) {
     val length: Long = (min.tick..max.tick).random()
@@ -12,6 +13,3 @@ abstract class GhostTask(min: Int, max: Int) {
         return if (length <= passed) EXPIRED else PASS
     }
 }
-
-val Int.tick: Long
-    get() = (this * 20).toLong()

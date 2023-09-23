@@ -6,14 +6,14 @@ import io.github.command.ModCommands
 import io.github.entity.ModEntities
 import io.github.entity.custom.NotebookEntity
 import io.github.entity.notebookEntityType
+import io.github.ghost.Ghost
+import io.github.ghost.GhostType
 import io.github.item.ModItems
+import io.github.room.RoomSystem
+import io.github.room.withoutPoints
 import io.github.util.DeepSilenceResult
 import io.github.util.DeepSilenceResult.FAIL
 import io.github.util.DeepSilenceResult.SUCCESS
-import io.github.util.ghost.Ghost
-import io.github.util.ghost.GhostType
-import io.github.util.room.RoomSystem
-import io.github.util.room.withoutPoints
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.fabricmc.api.ModInitializer
@@ -31,6 +31,9 @@ const val MOD_ID = "ds"
 val PATH: String = getPath()
 
 val tickListeners = mutableListOf<Runnable>()
+
+val Int.tick: Long
+    get() = (this * 20).toLong()
 
 class DeepSilence : ModInitializer {
     private val logger = LoggerFactory.getLogger(this.javaClass)
@@ -92,12 +95,12 @@ class DeepSilence : ModInitializer {
     fun start(context: CommandContext<ServerCommandSource>): DeepSilenceResult {
         val entity = NotebookEntity(notebookEntityType!!, context.source.world)
         val room = roomSystem.getRandomRoom() ?: return FAIL
-        val ghost = GhostType.generate(context.source.world, roomSystem, room)
+        val ghost = GhostType.generate(room)
         this.entity = entity
         this.ghost = ghost
 
         context.source.world.spawnEntity(entity)
-        tickListeners.add { this.ghost?.location?.let { entity.setPos(it.x, it.y, it.z) } }
+        tickListeners.add { this.ghost?.location?.let { entity.setPos(it.x, it.y + 1, it.z) } }
         id = tickListeners.size - 1
 
         return SUCCESS
@@ -108,14 +111,7 @@ class DeepSilence : ModInitializer {
         entity?.kill()
         this.ghost?.kill()
         this.ghost = null
-    }
-}
-
-fun Text.add(string: String): Text = Text.of(this.string + string)
-
-fun checkDirectory(path: String) {
-    if (!File(path).exists()) {
-        File(path).mkdir()
+        println(tickListeners.size)
     }
 }
 
@@ -125,3 +121,13 @@ private fun getPath(): String {
     checkDirectory(path)
     return path
 }
+
+fun checkDirectory(path: String) {
+    if (!File(path).exists()) {
+        File(path).mkdir()
+    }
+}
+
+fun Text.add(string: String): Text = Text.of(this.string + string)
+
+fun <T> random(vararg element: T) = element.random()

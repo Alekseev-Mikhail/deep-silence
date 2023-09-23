@@ -1,4 +1,4 @@
-package io.github.util.room
+package io.github.room
 
 import io.github.util.Point
 import kotlinx.serialization.Serializable

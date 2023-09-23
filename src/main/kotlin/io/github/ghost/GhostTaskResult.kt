@@ -1,4 +1,4 @@
-package io.github.util.ghost
+package io.github.ghost
 
 enum class GhostTaskResult {
     PASS,

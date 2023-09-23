@@ -7,12 +7,12 @@ import io.github.DeepSilence
 import io.github.MOD_ID
 import io.github.ModRegister
 import io.github.add
-import io.github.util.room.RoomSystemResult.ALREADY
-import io.github.util.room.RoomSystemResult.ONE_WAY_LINK
-import io.github.util.room.RoomSystemResult.POINT_DOES_NOT_EXIST
-import io.github.util.room.RoomSystemResult.ROOM_DOES_NOT_EXIST
-import io.github.util.room.RoomSystemResult.SAME_ROOM
-import io.github.util.room.RoomSystemResult.SUCCESS
+import io.github.room.RoomSystemResult.ALREADY
+import io.github.room.RoomSystemResult.ONE_WAY_LINK
+import io.github.room.RoomSystemResult.POINT_DOES_NOT_EXIST
+import io.github.room.RoomSystemResult.ROOM_DOES_NOT_EXIST
+import io.github.room.RoomSystemResult.SAME_ROOM
+import io.github.room.RoomSystemResult.SUCCESS
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
@@ -219,8 +219,8 @@ class ModCommands(private val deepSilence: DeepSilence) : ModRegister() {
     }
 
     private fun ghostShowTask(player: ServerPlayerEntity): Int {
-        val task = ghost?.getTask() ?: return sendReply(player, "ghost.show.tasks.fail", COMMAND_FAIL)
-        return sendReply(player, "ghost.show.tasks.success", " (${task.first.name}: ${task.second.length})", COMMAND_SUCCESS)
+        val task = ghost?.task() ?: return sendReply(player, "ghost.show.tasks.fail", COMMAND_FAIL)
+        return sendReply(player, "ghost.show.tasks.success", " (${task.javaClass.name}: ${task.length})", COMMAND_SUCCESS)
     }
 
     private fun roomCreate(context: CommandContext<ServerCommandSource>, player: ServerPlayerEntity): Int {
