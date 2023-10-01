@@ -4,8 +4,6 @@ import com.mojang.brigadier.context.CommandContext
 import io.github.block.ModBlocks
 import io.github.command.ModCommands
 import io.github.entity.ModEntities
-import io.github.entity.custom.NotebookEntity
-import io.github.entity.notebookEntityType
 import io.github.ghost.Ghost
 import io.github.ghost.GhostType
 import io.github.item.ModItems
@@ -18,7 +16,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.server.ServerTickCallback
-import net.minecraft.entity.Entity
+import net.minecraft.particle.ParticleTypes
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.text.Text
 import org.slf4j.LoggerFactory
@@ -31,9 +29,6 @@ const val MOD_ID = "ds"
 val PATH: String = getPath()
 
 val tickListeners = mutableListOf<Runnable>()
-
-val Int.tick: Long
-    get() = (this * 20).toLong()
 
 class DeepSilence : ModInitializer {
     private val logger = LoggerFactory.getLogger(this.javaClass)
@@ -73,7 +68,7 @@ class DeepSilence : ModInitializer {
 
     fun save(name: String) {
         val path = "$PATH/$name"
-        checkDirectory(path)
+        touchDirectory(path)
         val file = FileWriter("$path/rs.json")
         val string = Json.encodeToString(withoutPoints(insideRoomSystem))
         file.write(string)
@@ -90,39 +85,47 @@ class DeepSilence : ModInitializer {
         return FAIL
     }
 
-    private var entity: Entity? = null
-    private var id = -1
+    private var taskId = -1
+
     fun start(context: CommandContext<ServerCommandSource>): DeepSilenceResult {
-        val entity = NotebookEntity(notebookEntityType!!, context.source.world)
         val room = roomSystem.getRandomRoom() ?: return FAIL
         val ghost = GhostType.generate(room)
-        this.entity = entity
         this.ghost = ghost
 
-        context.source.world.spawnEntity(entity)
-        tickListeners.add { this.ghost?.location?.let { entity.setPos(it.x, it.y + 1, it.z) } }
-        id = tickListeners.size - 1
+        // For Debug
+        tickListeners.add {
+            context.source.world.spawnParticles(
+                ParticleTypes.SMOKE,
+                ghost.location.x,
+                ghost.location.y,
+                ghost.location.z,
+                1,
+                0.001,
+                0.001,
+                0.001,
+                0.001,
+            )
+        }
+        taskId = tickListeners.lastIndex
 
         return SUCCESS
     }
 
     fun stop() {
-        tickListeners.removeAt(id)
-        entity?.kill()
-        this.ghost?.kill()
-        this.ghost = null
-        println(tickListeners.size)
+        ghost?.kill()
+        tickListeners.removeAt(taskId)
+        ghost = null
     }
 }
 
 private fun getPath(): String {
     var path = File(DeepSilence::class.java.protectionDomain.codeSource.location.path).parentFile.absolutePath
     path = if (path.contains("classes")) "$path/../../../$MOD_ID" else "$path/../$MOD_ID"
-    checkDirectory(path)
+    touchDirectory(path)
     return path
 }
 
-fun checkDirectory(path: String) {
+fun touchDirectory(path: String) {
     if (!File(path).exists()) {
         File(path).mkdir()
     }

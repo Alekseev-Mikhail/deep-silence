@@ -7,11 +7,12 @@ import io.github.tickListeners
 import io.github.util.Location
 import kotlin.math.abs
 import kotlin.math.min
+import kotlin.random.Random
 
-abstract class Ghost(val currentRoom: Room) {
+abstract class Ghost(val currentRoom: Room, rawSpeed: Double) {
     val location = getInitLocation(currentRoom)
-
-    private var task: GhostTask = WaitTask(1, 2)
+    val speed = Random.nextDouble(0.9, 1.1) * rawSpeed
+    private var task: GhostTask = WaitTask(0, 1)
     private val actionId: Int
 
     init {
@@ -22,7 +23,7 @@ abstract class Ghost(val currentRoom: Room) {
     protected abstract fun generateTask(): GhostTask
 
     private fun think() {
-        if (task.step(this) == EXPIRED) {
+        if (task.action(this) == EXPIRED) {
             task = generateTask()
         }
     }

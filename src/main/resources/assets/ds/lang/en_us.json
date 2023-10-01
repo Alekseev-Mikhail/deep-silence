@@ -25,8 +25,11 @@
   "command.ds.read.success": "Room System read successful",
   "command.ds.read.fail": "Something went wrong",
 
-  "command.ds.ghost.show.tasks.success": "Ghost tasks show successful",
-  "command.ds.ghost.show.tasks.fail": "Ghost does not exist",
+  "command.ds.ghost.show.task.success": "Task",
+  "command.ds.ghost.show.task.fail": "Ghost does not exist",
+
+  "command.ds.ghost.show.location.success": "Location",
+  "command.ds.ghost.show.location.fail": "Ghost does not exist",
 
   "command.ds.room.create.success": "Room create successful",
   "command.ds.room.create.fail.exist": "Some point does not exist",

@@ -13,12 +13,14 @@ import io.github.room.RoomSystemResult.POINT_DOES_NOT_EXIST
 import io.github.room.RoomSystemResult.ROOM_DOES_NOT_EXIST
 import io.github.room.RoomSystemResult.SAME_ROOM
 import io.github.room.RoomSystemResult.SUCCESS
+import io.github.util.tSeconds
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.minecraft.server.command.CommandManager
 import net.minecraft.server.command.ServerCommandSource
 import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.text.Text.translatable
+import java.text.DecimalFormat
 import io.github.util.DeepSilenceResult.FAIL as DS_FAIL
 import io.github.util.DeepSilenceResult.SUCCESS as DS_SUCCESS
 
@@ -85,6 +87,13 @@ class ModCommands(private val deepSilence: DeepSilence) : ModRegister() {
                                         val player = prepare(context)
                                             ?: return@executes COMMAND_FAIL
                                         ghostShowTask(player)
+                                    },
+                                )
+                                .then(
+                                    literal<ServerCommandSource>("location").executes { context ->
+                                        val player = prepare(context)
+                                            ?: return@executes COMMAND_FAIL
+                                        ghostShowLocation(player)
                                     },
                                 ),
                         ),
@@ -219,8 +228,13 @@ class ModCommands(private val deepSilence: DeepSilence) : ModRegister() {
     }
 
     private fun ghostShowTask(player: ServerPlayerEntity): Int {
-        val task = ghost?.task() ?: return sendReply(player, "ghost.show.tasks.fail", COMMAND_FAIL)
-        return sendReply(player, "ghost.show.tasks.success", " (${task.javaClass.name}: ${task.length})", COMMAND_SUCCESS)
+        val task = ghost?.task() ?: return sendReply(player, "ghost.show.task.fail", COMMAND_FAIL)
+        return sendReply(player, "ghost.show.task.success", " (${task.nameId}: ${DecimalFormat("0.000").format(task.length.tSeconds)})", COMMAND_SUCCESS)
+    }
+
+    private fun ghostShowLocation(player: ServerPlayerEntity): Int {
+        val location = ghost?.location ?: return sendReply(player, "ghost.show.location.fail", COMMAND_FAIL)
+        return sendReply(player, "ghost.show.location.success", " - $location", COMMAND_SUCCESS)
     }
 
     private fun roomCreate(context: CommandContext<ServerCommandSource>, player: ServerPlayerEntity): Int {
